@@ -1,0 +1,7 @@
+Flask
+Flask-SQLAlchemy
+python-dotenv
+bcrypt
+APScheduler
+google-generativeai
+pytest
