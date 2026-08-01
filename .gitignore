@@ -1,0 +1,34 @@
+# Biến môi trường thật — KHÔNG BAO GIỜ commit (mục 9 đặc tả)
+.env
+.env.local
+
+# Cơ sở dữ liệu SQLite và bản sao lưu
+*.db
+*.sqlite
+*.sqlite3
+database/backups/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Môi trường ảo
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Hệ điều hành
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Log
+*.log
