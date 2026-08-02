@@ -33,4 +33,27 @@ def create_app(config_name='default'):
     from backend.app.auth.routes import auth_bp
     app.register_blueprint(auth_bp)
 
+    if app.config.get('TESTING'):
+        _dang_ky_route_thu_nghiem(app)
+
     return app
+
+
+def _dang_ky_route_thu_nghiem(app):
+    """Route dùng riêng cho test decorator phân quyền.
+
+    Chỉ đăng ký khi cờ TESTING bật, nên các route này KHÔNG tồn tại lúc chạy
+    thật — không mở thêm bề mặt tấn công.
+    """
+    from backend.app.auth.decorators import require_role
+    from backend.app.models import UserRole
+
+    @app.route('/_thu-nghiem/chi-admin')
+    @require_role(UserRole.ADMIN)
+    def _thu_nghiem_chi_admin():
+        return 'ok'
+
+    @app.route('/_thu-nghiem/admin-va-le-tan')
+    @require_role(UserRole.ADMIN, UserRole.RECEPTIONIST)
+    def _thu_nghiem_admin_va_le_tan():
+        return 'ok'
