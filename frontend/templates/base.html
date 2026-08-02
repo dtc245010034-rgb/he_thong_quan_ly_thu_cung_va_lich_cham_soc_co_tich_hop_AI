@@ -21,10 +21,11 @@
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('pets.danh_sach_thu_cung') }}">Thú cưng</a>
       </li>
-      {# Cấu hình dịch vụ và giá chỉ dành cho quản lý (mục 3.1 đặc tả). #}
-      {% if nguoi_dung.role.value == 'admin' %}
+      {# Chủ nuôi không thấy bảng giá nội bộ. Lễ tân và nhân viên xem được để
+         tư vấn khách, nhưng chỉ quản lý mới sửa được (mục 3.1 đặc tả). #}
+      {% if nguoi_dung.role.value in ['admin', 'receptionist', 'staff'] %}
       <li class="nav-item">
-        <a class="nav-link" href="#">Dịch vụ</a>
+        <a class="nav-link" href="{{ url_for('catalog.danh_sach_dich_vu') }}">Dịch vụ</a>
       </li>
       {% endif %}
     </ul>

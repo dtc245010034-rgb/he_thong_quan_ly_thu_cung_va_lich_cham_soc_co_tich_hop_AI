@@ -94,14 +94,18 @@ Mở `backend/.env` và điền `GEMINI_API_KEY`. Kiểm tra lại tên model đ
 
 ```bash
 # 4. Khởi tạo CSDL và nạp dữ liệu mẫu
-python -m backend.app.main --init-db
-sqlite3 pet_care.db < database/seed_data.sql
+flask --app backend.app.main init-db
+flask --app backend.app.main seed-db
 
 # 5. Chạy ứng dụng
 flask --app backend.app.main run
 ```
 
-Mở trình duyệt tại `http://127.0.0.1:5000`.
+Mở trình duyệt tại `http://127.0.0.1:5000`. Tài khoản demo: `admin`, `letan`, `groomer1`, `groomer2`, `chunuoi1`, `chunuoi2` — mật khẩu đều là `demo1234`.
+
+> **File CSDL nằm ở `instance/pet_care.db`**, không phải thư mục gốc. Flask tự đưa đường dẫn SQLite tương đối vào thư mục `instance/`. Thư mục này đã được `.gitignore` loại trừ.
+
+`seed-db` từ chối chạy khi CSDL đã có dữ liệu, tránh nhân đôi khi lỡ chạy hai lần. Muốn nạp lại từ đầu thì xóa `instance/pet_care.db` rồi chạy lại `init-db` và `seed-db`.
 
 ```bash
 # Chạy kiểm thử

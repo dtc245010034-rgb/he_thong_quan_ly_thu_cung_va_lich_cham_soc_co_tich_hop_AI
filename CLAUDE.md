@@ -52,6 +52,8 @@ venv\Scripts\python.exe -m flask --app backend.app.main run
 
 Môi trường: Python **3.14.6**, cài qua Python Manager của winget ở `%LOCALAPPDATA%\Python\bin`.
 
+**File CSDL nằm ở `instance/pet_care.db`**, không phải thư mục gốc — Flask tự đưa đường dẫn SQLite tương đối vào `instance/`. Muốn nạp lại dữ liệu mẫu từ đầu thì xóa file đó rồi chạy lại `init-db` và `seed-db`.
+
 Tài khoản demo sau khi `seed-db`: `admin`, `letan`, `groomer1`, `groomer2`, `chunuoi1`, `chunuoi2` — mật khẩu đều là `demo1234`.
 
 ## Quy ước bắt buộc
@@ -82,6 +84,7 @@ Message nhiều dòng phải ghi ra file rồi `git commit -F <file>` — here-s
 | `database/seed_data.sql` hỏng vì dấu `;` trong dòng chú thích | Hàm nạp cắt câu theo `;`. Không dùng dấu này ở bất kỳ đâu ngoài dấu kết câu |
 | `Model.query.get()` sinh cảnh báo trên SQLAlchemy 2.x | Dùng `db.session.get(Model, id)` và `db.session.execute(db.select(...))` |
 | Bảng có 2 khóa ngoại cùng trỏ về `users` | Phải chỉ định `foreign_keys=` cho từng quan hệ |
+| Tưởng CSDL nằm ở gốc dự án, xóa nhầm file rỗng còn dữ liệu thật vẫn nguyên | CSDL thật ở `instance/pet_care.db` |
 
 ## Nhật ký AI — bắt buộc cập nhật
 

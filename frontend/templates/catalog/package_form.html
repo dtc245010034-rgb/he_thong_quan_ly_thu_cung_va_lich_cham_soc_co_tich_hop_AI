@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Thêm gói dịch vụ{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">Thêm gói dịch vụ combo</h1>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<div class="alert alert-info">
+  Giá gói phải <strong>nhỏ hơn</strong> tổng giá mua lẻ các dịch vụ trong gói.
+  Gói đắt hơn mua lẻ thì khách không có lý do gì để chọn.
+</div>
+
+<form method="post" class="card p-4 bg-white" style="max-width: 760px;">
+  <div class="mb-3">
+    <label class="form-label" for="name">Tên gói <span class="text-danger">*</span></label>
+    <input class="form-control" id="name" name="name" required
+           value="{{ (form.name if form is defined else '') or '' }}">
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="description">Mô tả</label>
+    <input class="form-control" id="description" name="description"
+           value="{{ (form.description if form is defined else '') or '' }}">
+  </div>
+  <div class="mb-4">
+    <label class="form-label" for="package_price">Giá gói (đồng) <span class="text-danger">*</span></label>
+    <input class="form-control" id="package_price" name="package_price"
+           type="number" step="1000" min="1" required style="max-width: 260px;"
+           value="{{ (form.package_price if form is defined else '') or '' }}">
+  </div>
+
+  <h2 class="h6 mb-2">Dịch vụ trong gói</h2>
+  <div class="table-responsive mb-4">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr><th style="width:60px;">Chọn</th><th>Dịch vụ</th>
+            <th class="text-end">Giá lẻ</th><th style="width:120px;">Số lượng</th></tr>
+      </thead>
+      <tbody>
+        {% for dv in dich_vu %}
+        <tr>
+          <td><input type="checkbox" name="service_id" value="{{ dv.id }}"></td>
+          <td>{{ dv.name }}</td>
+          <td class="text-end">{{ '{:,.0f}'.format(dv.price) }} đ</td>
+          <td><input class="form-control form-control-sm" type="number"
+                     name="quantity" value="1" min="1"></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div>
+    <button class="btn btn-primary" type="submit">Lưu</button>
+    <a class="btn btn-link" href="{{ url_for('catalog.danh_sach_goi') }}">Hủy</a>
+  </div>
+</form>
+{% endblock %}

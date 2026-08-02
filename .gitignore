@@ -3,9 +3,11 @@
 .env.local
 
 # Cơ sở dữ liệu SQLite và bản sao lưu
+# Flask đưa CSDL SQLite đường dẫn tương đối vào thư mục instance/
 *.db
 *.sqlite
 *.sqlite3
+instance/
 database/backups/
 
 # Python

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% set dang_sua = dich_vu is not none %}
+{% set gia_tri = form if form is defined else dich_vu %}
+{% set TEN_DANH_MUC = {'tam': 'Tắm', 'spa': 'Spa', 'grooming': 'Grooming', 'khac': 'Khác'} %}
+
+{% block title %}{{ 'Sửa' if dang_sua else 'Thêm' }} dịch vụ{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">{{ 'Sửa dịch vụ' if dang_sua else 'Thêm dịch vụ mới' }}</h1>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+{% if dang_sua %}
+<div class="alert alert-info">
+  Đổi giá sẽ được ghi vào lịch sử giá kèm tên người đổi. Các hóa đơn đã lập
+  trước đó vẫn giữ nguyên số tiền cũ.
+</div>
+{% endif %}
+
+<form method="post" class="card p-4 bg-white" style="max-width: 680px;">
+  <div class="mb-3">
+    <label class="form-label" for="name">Tên dịch vụ <span class="text-danger">*</span></label>
+    <input class="form-control" id="name" name="name" required
+           value="{{ (gia_tri.name if gia_tri else '') or '' }}">
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="category">Danh mục <span class="text-danger">*</span></label>
+    <select class="form-select" id="category" name="category" required>
+      {% for dm in danh_muc %}
+      <option value="{{ dm.value }}"
+        {% if dich_vu and dich_vu.category == dm %}selected{% endif %}>
+        {{ TEN_DANH_MUC.get(dm.value, dm.value) }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="price">Giá (đồng) <span class="text-danger">*</span></label>
+      <input class="form-control" id="price" name="price" type="number" step="1000" min="0" required
+             value="{{ (gia_tri.price if gia_tri else '') or '' }}">
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="duration_minutes">Thời lượng (phút) <span class="text-danger">*</span></label>
+      <input class="form-control" id="duration_minutes" name="duration_minutes"
+             type="number" min="1" required
+             value="{{ (gia_tri.duration_minutes if gia_tri else '') or '' }}">
+    </div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="description">Mô tả</label>
+    <textarea class="form-control" id="description" name="description" rows="2">{{ (gia_tri.description if gia_tri else '') or '' }}</textarea>
+  </div>
+  <div class="form-check mb-4">
+    <input class="form-check-input" type="checkbox" id="is_active" name="is_active"
+           {% if not dang_sua or dich_vu.is_active %}checked{% endif %}>
+    <label class="form-check-label" for="is_active">Đang bán</label>
+  </div>
+  <div>
+    <button class="btn btn-primary" type="submit">Lưu</button>
+    <a class="btn btn-link" href="{{ url_for('catalog.danh_sach_dich_vu') }}">Hủy</a>
+  </div>
+</form>
+{% endblock %}

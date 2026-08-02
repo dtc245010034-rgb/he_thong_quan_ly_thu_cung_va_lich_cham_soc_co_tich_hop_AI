@@ -31,11 +31,13 @@ def create_app(config_name='default'):
     from backend.app import models  # noqa: F401
 
     from backend.app.auth.routes import auth_bp
+    from backend.app.routers.catalog import catalog_bp
     from backend.app.routers.owners import owners_bp
     from backend.app.routers.pets import pets_bp
     app.register_blueprint(auth_bp)
     app.register_blueprint(owners_bp)
     app.register_blueprint(pets_bp)
+    app.register_blueprint(catalog_bp)
 
     _dang_ky_xu_ly_loi(app)
     _dang_ky_bien_dung_chung(app)
