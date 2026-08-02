@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Hủy lịch hẹn #{{ lich.id }}{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">Hủy lịch hẹn #{{ lich.id }}</h1>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<div class="alert alert-warning">
+  <strong>Sắp hủy:</strong>
+  {{ lich.scheduled_at.strftime('%H:%M %d/%m/%Y') }}
+  · {{ lich.pet.name }} ({{ lich.pet.owner.full_name }})
+  · {{ lich.service.name }}
+  <div class="small mt-1">Khung giờ này sẽ được giải phóng ngay sau khi hủy.</div>
+</div>
+
+<form method="post" class="card p-4 bg-white" style="max-width: 640px;">
+  <div class="mb-3">
+    <label class="form-label" for="ly_do">Lý do hủy <span class="text-danger">*</span></label>
+    <select class="form-select" id="ly_do" name="ly_do" required onchange="hienOMoTa()">
+      <option value="">— Chọn lý do —</option>
+      {% for ma, ten in ly_do_huy.items() %}
+      <option value="{{ ma }}"
+        {% if form is defined and form.ly_do == ma %}selected{% endif %}>{{ ten }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="mb-4" id="khoi_mo_ta" style="display: none;">
+    <label class="form-label" for="mo_ta">Mô tả cụ thể <span class="text-danger">*</span></label>
+    <input class="form-control" id="mo_ta" name="mo_ta"
+           value="{{ form.mo_ta if form is defined else '' }}">
+    <div class="form-text">
+      Bắt buộc khi chọn "Khác" — nếu không, về sau tra cứu chỉ thấy chữ
+      "Khác" mà không biết đã xảy ra chuyện gì.
+    </div>
+  </div>
+
+  <div>
+    <button class="btn btn-danger" type="submit">Xác nhận hủy lịch</button>
+    <a class="btn btn-link" href="{{ url_for('appointments.chi_tiet_lich_hen', appointment_id=lich.id) }}">Quay lại</a>
+  </div>
+</form>
+
+<script>
+  // Ô mô tả chỉ hiện khi chọn "Khác". Tầng nghiệp vụ vẫn kiểm tra lại, nên
+  // tắt JavaScript cũng không lách được ràng buộc này.
+  function hienOMoTa() {
+    var chon = document.getElementById('ly_do').value;
+    document.getElementById('khoi_mo_ta').style.display = (chon === 'khac') ? 'block' : 'none';
+  }
+  hienOMoTa();
+</script>
+{% endblock %}

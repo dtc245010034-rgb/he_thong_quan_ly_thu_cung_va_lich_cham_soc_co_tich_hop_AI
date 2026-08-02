@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% from "appointments/_trang_thai.html" import nhan %}
+
+{% set quan_ly_lich = nguoi_dung.role.value in ['admin', 'receptionist'] %}
+{% set con_hieu_luc = lich.status.value in ['pending', 'confirmed'] %}
+
+{% block title %}Lịch hẹn #{{ lich.id }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <div>
+    <h1 class="h4 mb-1">Lịch hẹn #{{ lich.id }} {{ nhan(lich.status) }}</h1>
+    <p class="text-secondary mb-0">
+      {{ lich.scheduled_at.strftime('%H:%M %d/%m/%Y') }} — {{ lich.ends_at.strftime('%H:%M') }}
+    </p>
+  </div>
+  <div>
+    {% if quan_ly_lich and lich.status.value == 'pending' %}
+    <form method="post" action="{{ url_for('appointments.xac_nhan_lich_hen', appointment_id=lich.id) }}" class="d-inline">
+      <button class="btn btn-primary" type="submit">Xác nhận</button>
+    </form>
+    {% endif %}
+    {% if con_hieu_luc and nguoi_dung.role.value in ['admin', 'receptionist', 'staff'] %}
+    <form method="post" action="{{ url_for('appointments.hoan_thanh_lich_hen', appointment_id=lich.id) }}" class="d-inline"
+          onsubmit="return confirm('Đánh dấu buổi hẹn này đã hoàn thành?');">
+      <button class="btn btn-success" type="submit">Hoàn thành</button>
+    </form>
+    {% endif %}
+    {% if quan_ly_lich and con_hieu_luc %}
+    <a class="btn btn-outline-primary" href="{{ url_for('appointments.doi_lich_hen', appointment_id=lich.id) }}">Đổi lịch</a>
+    <a class="btn btn-outline-danger" href="{{ url_for('appointments.huy_lich_hen', appointment_id=lich.id) }}">Hủy lịch</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card bg-white mb-4">
+  <div class="card-body">
+    <dl class="row mb-0">
+      <dt class="col-sm-3">Thú cưng</dt>
+      <dd class="col-sm-9">
+        <a href="{{ url_for('pets.chi_tiet_thu_cung', pet_id=lich.pet_id) }}">{{ lich.pet.name }}</a>
+        <span class="text-secondary">— {{ lich.pet.species }}</span>
+      </dd>
+      <dt class="col-sm-3">Chủ nuôi</dt>
+      <dd class="col-sm-9">{{ lich.pet.owner.full_name }} — {{ lich.pet.owner.phone }}</dd>
+      <dt class="col-sm-3">Dịch vụ</dt>
+      <dd class="col-sm-9">{{ lich.service.name }} ({{ lich.service.duration_minutes }} phút)</dd>
+      <dt class="col-sm-3">Nhân viên</dt>
+      <dd class="col-sm-9">
+        {{ lich.staff.full_name or lich.staff.username if lich.staff else 'Chưa phân công' }}
+      </dd>
+      <dt class="col-sm-3">Ghi chú</dt>
+      <dd class="col-sm-9">{{ lich.notes or '—' }}</dd>
+    </dl>
+  </div>
+</div>
+
+<h2 class="h6 mb-2">Lịch sử đổi lịch ({{ lich.history|length }})</h2>
+{% if lich.history %}
+<div class="table-responsive">
+  <table class="table table-sm bg-white">
+    <thead><tr><th>Giờ cũ</th><th>Giờ mới</th><th>Lý do</th><th>Người đổi</th><th>Thời điểm</th></tr></thead>
+    <tbody>
+      {% for h in lich.history %}
+      <tr>
+        <td>{{ h.old_time.strftime('%H:%M %d/%m/%Y') }}</td>
+        <td>{{ h.new_time.strftime('%H:%M %d/%m/%Y') }}</td>
+        <td>{{ ly_do_huy.get(h.reason, h.reason) }}</td>
+        <td>{{ h.changed_by_user.full_name or h.changed_by_user.username }}</td>
+        <td>{{ h.changed_at.strftime('%H:%M %d/%m/%Y') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-secondary">Lịch hẹn này chưa từng bị đổi giờ.</p>
+{% endif %}
+{% endblock %}

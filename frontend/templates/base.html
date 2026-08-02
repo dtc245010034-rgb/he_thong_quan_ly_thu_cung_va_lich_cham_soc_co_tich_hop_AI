@@ -21,6 +21,9 @@
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('pets.danh_sach_thu_cung') }}">Thú cưng</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('appointments.danh_sach_lich_hen') }}">Lịch hẹn</a>
+      </li>
       {# Chủ nuôi không thấy bảng giá nội bộ. Lễ tân và nhân viên xem được để
          tư vấn khách, nhưng chỉ quản lý mới sửa được (mục 3.1 đặc tả). #}
       {% if nguoi_dung.role.value in ['admin', 'receptionist', 'staff'] %}
