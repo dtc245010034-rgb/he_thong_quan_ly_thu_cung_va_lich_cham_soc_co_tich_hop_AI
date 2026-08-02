@@ -6,7 +6,7 @@
 
 **Architecture:** Flask app factory + Flask-SQLAlchemy. Instance `db` đặt ở `extensions.py` để `models/` và `main.py` cùng import được mà không tạo vòng lặp. Xác thực bằng session cookie, mật khẩu hash bcrypt. Phân quyền lớp 1 (theo vai trò) làm ở mốc này; lớp 2 (theo quyền sở hữu dữ liệu) làm ở KT2-B khi đã có tầng service.
 
-**Tech Stack:** Python 3.13, Flask, Flask-SQLAlchemy, python-dotenv, bcrypt, pytest.
+**Tech Stack:** Python 3.14.6, Flask 3.1.3, Flask-SQLAlchemy 3.1.1, SQLAlchemy 2.0.51, python-dotenv 1.2.2, bcrypt 5.0.0, pytest 9.1.1.
 
 ## Global Constraints
 
@@ -22,7 +22,11 @@
 
 ### Điều kiện tiên quyết
 
-Python 3.13 đã cài và có trong `PATH`. Kiểm tra bằng `python --version` trước khi bắt đầu Task 1. Nếu chưa có, **dừng lại** — không có Python thì không chạy được test, mà không chạy được test thì không phải TDD.
+Python đã cài. Kiểm tra bằng `python --version` trước khi bắt đầu Task 1. Nếu chưa có, **dừng lại** — không có Python thì không chạy được test, mà không chạy được test thì không phải TDD.
+
+**Ghi chú môi trường thực tế (cập nhật sau khi chạy Task 1):** máy phát triển cài Python **3.14.6** qua Python Manager của winget, nằm ở `%LOCALAPPDATA%\Python\bin`. Đường dẫn này vào registry `PATH` ngay nhưng tiến trình đang chạy sẵn thì chưa nhận — phải mở lại terminal, hoặc gọi bằng đường dẫn đầy đủ.
+
+Mọi lệnh trong kế hoạch này chạy bằng Python của môi trường ảo: `venv\Scripts\python.exe -m pytest ...`. Toàn bộ thư viện đều có wheel dựng sẵn cho `cp314`, kể cả `bcrypt` và `greenlet`, nên không phải biên dịch gì.
 
 ### Sai khác so với tài liệu thiết kế
 
