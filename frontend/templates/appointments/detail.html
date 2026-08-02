@@ -30,6 +30,9 @@
     <a class="btn btn-outline-primary" href="{{ url_for('appointments.doi_lich_hen', appointment_id=lich.id) }}">Đổi lịch</a>
     <a class="btn btn-outline-danger" href="{{ url_for('appointments.huy_lich_hen', appointment_id=lich.id) }}">Hủy lịch</a>
     {% endif %}
+    {% if lich.status.value == 'completed' and nguoi_dung.role.value in ['admin', 'receptionist', 'staff'] %}
+    <a class="btn btn-primary" href="{{ url_for('care_records.ghi_ho_so', appointment_id=lich.id) }}">Ghi hồ sơ chăm sóc</a>
+    {% endif %}
   </div>
 </div>
 
