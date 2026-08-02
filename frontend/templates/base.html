@@ -9,6 +9,39 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 </head>
 <body class="bg-light">
+
+{% if nguoi_dung %}
+<nav class="navbar navbar-expand navbar-dark bg-dark">
+  <div class="container">
+    <span class="navbar-brand">🐾 Quản lý Thú cưng</span>
+    <ul class="navbar-nav me-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('owners.danh_sach_chu_nuoi') }}">Chủ nuôi</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('pets.danh_sach_thu_cung') }}">Thú cưng</a>
+      </li>
+      {# Cấu hình dịch vụ và giá chỉ dành cho quản lý (mục 3.1 đặc tả). #}
+      {% if nguoi_dung.role.value == 'admin' %}
+      <li class="nav-item">
+        <a class="nav-link" href="#">Dịch vụ</a>
+      </li>
+      {% endif %}
+    </ul>
+    <span class="navbar-text me-3">
+      {{ nguoi_dung.full_name or nguoi_dung.username }}
+      <span class="badge bg-secondary">{{ vai_tro_tieng_viet }}</span>
+    </span>
+    <form method="post" action="{{ url_for('auth.dang_xuat') }}" class="d-inline">
+      <button class="btn btn-sm btn-outline-light" type="submit">Đăng xuất</button>
+    </form>
+  </div>
+</nav>
+{% endif %}
+
+<div class="container py-4">
   {% block content %}{% endblock %}
+</div>
+
 </body>
 </html>

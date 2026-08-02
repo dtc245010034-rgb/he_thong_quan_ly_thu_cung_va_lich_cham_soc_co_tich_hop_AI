@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Chủ nuôi — Quản lý Thú cưng{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Chủ nuôi</h1>
+  {% if nguoi_dung.role.value in ['admin', 'receptionist'] %}
+  <a class="btn btn-primary" href="{{ url_for('owners.them_chu_nuoi') }}">Thêm chủ nuôi</a>
+  {% endif %}
+</div>
+
+<form class="row g-2 mb-3" method="get">
+  <div class="col-auto">
+    <input class="form-control" name="tu_khoa" value="{{ tu_khoa or '' }}"
+           placeholder="Tìm theo tên hoặc số điện thoại">
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-outline-secondary" type="submit">Tìm</button>
+  </div>
+</form>
+
+{% if danh_sach %}
+<div class="table-responsive">
+  <table class="table table-hover bg-white">
+    <thead>
+      <tr><th>Họ tên</th><th>Số điện thoại</th><th>Email</th><th>Địa chỉ</th></tr>
+    </thead>
+    <tbody>
+      {% for chu in danh_sach %}
+      <tr>
+        <td><a href="{{ url_for('owners.chi_tiet_chu_nuoi', owner_id=chu.id) }}">{{ chu.full_name }}</a></td>
+        <td>{{ chu.phone }}</td>
+        <td>{{ chu.email or '—' }}</td>
+        <td>{{ chu.address or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-secondary">Không có chủ nuôi nào khớp điều kiện tìm kiếm.</p>
+{% endif %}
+{% endblock %}

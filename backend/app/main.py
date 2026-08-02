@@ -31,7 +31,14 @@ def create_app(config_name='default'):
     from backend.app import models  # noqa: F401
 
     from backend.app.auth.routes import auth_bp
+    from backend.app.routers.owners import owners_bp
+    from backend.app.routers.pets import pets_bp
     app.register_blueprint(auth_bp)
+    app.register_blueprint(owners_bp)
+    app.register_blueprint(pets_bp)
+
+    _dang_ky_xu_ly_loi(app)
+    _dang_ky_bien_dung_chung(app)
 
     from backend.app.cli import dang_ky_lenh
     dang_ky_lenh(app)
@@ -40,6 +47,56 @@ def create_app(config_name='default'):
         _dang_ky_route_thu_nghiem(app)
 
     return app
+
+
+def _dang_ky_xu_ly_loi(app):
+    """Dịch ngoại lệ nghiệp vụ sang mã HTTP ở một chỗ duy nhất.
+
+    Nhờ vậy từng route không phải tự bắt ngoại lệ, và một route quên bắt
+    cũng không trả về lỗi 500 — vốn là cách rò rỉ thông tin hệ thống.
+    """
+    from flask import render_template
+
+    from backend.app.services.errors import (DuLieuKhongHopLe,
+                                             QuyenTruyCapBiTuChoi)
+
+    @app.errorhandler(QuyenTruyCapBiTuChoi)
+    def _tu_choi_quyen(e):
+        return render_template('errors/403.html', thong_diep=str(e)), 403
+
+    @app.errorhandler(DuLieuKhongHopLe)
+    def _du_lieu_sai(e):
+        return render_template('errors/404.html', thong_diep=str(e)), 404
+
+    @app.errorhandler(403)
+    def _loi_403(e):
+        return render_template('errors/403.html', thong_diep=None), 403
+
+    @app.errorhandler(404)
+    def _loi_404(e):
+        return render_template('errors/404.html', thong_diep=None), 404
+
+
+def _dang_ky_bien_dung_chung(app):
+    """Đưa người dùng hiện tại vào mọi template, để thanh điều hướng hiển thị
+    đúng theo vai trò mà không phải truyền thủ công ở từng route."""
+    from backend.app.auth.decorators import current_user
+
+    _TEN_VAI_TRO = {
+        'admin': 'Quản lý',
+        'receptionist': 'Lễ tân',
+        'staff': 'Nhân viên',
+        'owner': 'Chủ nuôi',
+    }
+
+    @app.context_processor
+    def _bien_dung_chung():
+        nguoi_dung = current_user()
+        return {
+            'nguoi_dung': nguoi_dung,
+            'vai_tro_tieng_viet': (_TEN_VAI_TRO.get(nguoi_dung.role.value)
+                                   if nguoi_dung else None),
+        }
 
 
 def _dang_ky_route_thu_nghiem(app):

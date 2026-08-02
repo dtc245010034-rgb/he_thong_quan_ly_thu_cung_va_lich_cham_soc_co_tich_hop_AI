@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Thú cưng — Quản lý Thú cưng{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Thú cưng</h1>
+  {% if nguoi_dung.role.value in ['admin', 'receptionist'] %}
+  <a class="btn btn-primary" href="{{ url_for('pets.them_thu_cung') }}">Thêm thú cưng</a>
+  {% endif %}
+</div>
+
+<form class="row g-2 mb-3" method="get">
+  <div class="col-auto">
+    <input class="form-control" name="tu_khoa" value="{{ tu_khoa or '' }}"
+           placeholder="Tìm theo tên thú cưng hoặc tên chủ">
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-outline-secondary" type="submit">Tìm</button>
+  </div>
+</form>
+
+{% if danh_sach %}
+<div class="table-responsive">
+  <table class="table table-hover bg-white">
+    <thead>
+      <tr><th>Tên</th><th>Loài</th><th>Giống</th><th>Chủ nuôi</th><th>Cân nặng</th></tr>
+    </thead>
+    <tbody>
+      {% for pet in danh_sach %}
+      <tr>
+        <td><a href="{{ url_for('pets.chi_tiet_thu_cung', pet_id=pet.id) }}">{{ pet.name }}</a></td>
+        <td>{{ pet.species }}</td>
+        <td>{{ pet.breed or '—' }}</td>
+        <td>{{ pet.owner.full_name }}</td>
+        <td>{{ pet.weight or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-secondary">Không có thú cưng nào khớp điều kiện tìm kiếm.</p>
+{% endif %}
+{% endblock %}

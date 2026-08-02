@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Không có quyền truy cập{% endblock %}
+
+{% block content %}
+<div class="card bg-white" style="max-width: 640px;">
+  <div class="card-body p-4">
+    <h1 class="h4">Không có quyền truy cập</h1>
+    <p class="text-secondary">
+      {{ thong_diep or 'Tài khoản của bạn không được phép xem nội dung này.' }}
+    </p>
+    <a class="btn btn-primary" href="{{ url_for('owners.danh_sach_chu_nuoi') }}">Quay lại</a>
+  </div>
+</div>
+{% endblock %}

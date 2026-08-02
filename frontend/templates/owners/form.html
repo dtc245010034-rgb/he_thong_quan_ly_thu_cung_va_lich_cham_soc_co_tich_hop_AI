@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% set dang_sua = chu is not none %}
+{% set gia_tri = form if form is defined else chu %}
+
+{% block title %}{{ 'Sửa' if dang_sua else 'Thêm' }} chủ nuôi{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">{{ 'Sửa hồ sơ chủ nuôi' if dang_sua else 'Thêm chủ nuôi mới' }}</h1>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<form method="post" class="card p-4 bg-white" style="max-width: 640px;">
+  <div class="mb-3">
+    <label class="form-label" for="full_name">Họ tên <span class="text-danger">*</span></label>
+    <input class="form-control" id="full_name" name="full_name" required
+           value="{{ (gia_tri.full_name if gia_tri else '') or '' }}">
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="phone">Số điện thoại <span class="text-danger">*</span></label>
+    <input class="form-control" id="phone" name="phone" required
+           value="{{ (gia_tri.phone if gia_tri else '') or '' }}">
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="email">Email</label>
+    <input class="form-control" id="email" name="email" type="email"
+           value="{{ (gia_tri.email if gia_tri else '') or '' }}">
+  </div>
+  <div class="mb-4">
+    <label class="form-label" for="address">Địa chỉ</label>
+    <input class="form-control" id="address" name="address"
+           value="{{ (gia_tri.address if gia_tri else '') or '' }}">
+  </div>
+  <div>
+    <button class="btn btn-primary" type="submit">Lưu</button>
+    <a class="btn btn-link" href="{{ url_for('owners.danh_sach_chu_nuoi') }}">Hủy</a>
+  </div>
+</form>
+{% endblock %}
