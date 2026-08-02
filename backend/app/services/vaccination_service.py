@@ -36,6 +36,13 @@ def tinh_trang_thai(lich, hom_nay):
     Nhận hom_nay làm THAM SỐ thay vì gọi date.today() bên trong. Nếu tự lấy
     ngày hiện tại thì test sẽ phụ thuộc ngày chạy máy và đỏ vào một ngày nào
     đó trong tương lai — loại lỗi rất khó truy khi xảy ra.
+
+    NGOẠI LỆ CÓ CHỦ ĐÍCH của quy ước "mọi hàm service nhận current_user":
+    đây là hàm tính thuần túy, không truy vấn CSDL. Nó nhận vào đối tượng
+    lịch mà bên gọi ĐÃ có sẵn và chỉ trả về một chuỗi. Nếu bên gọi lấy được
+    đối tượng đó mà chưa kiểm tra quyền thì rò rỉ đã xảy ra từ trước, thêm
+    current_user vào đây không cứu được gì. Việc kiểm tra quyền nằm ở
+    danh_sach_sap_den_han và danh_sach_theo_thu_cung.
     """
     if lich.is_done:
         return 'da_tiem'

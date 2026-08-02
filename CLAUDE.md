@@ -21,13 +21,15 @@ Theo đúng thứ tự:
 | Mốc | Nhánh | Trạng thái |
 |---|---|---|
 | KT1 — Tài liệu PTTK | `kt1-tai-lieu-pttk` | ✅ Xong, 7 commit, đã push |
-| KT2-A — Nền tảng | `kt2a-nen-tang` | ✅ Xong, 10 commit, 46 test xanh, đã push |
-| **KT2-B — Nghiệp vụ lõi** | `kt2b-nghiep-vu-loi` | 🔨 **Đang làm** — kế hoạch xong, chưa chạy task nào |
-| KT2-C — Tài chính & cổng | — | ⬜ Chưa lập kế hoạch |
+| KT2-A — Nền tảng | `kt2a-nen-tang` | ✅ Xong, 10 commit, 46 test xanh, đã merge |
+| KT2-B — Nghiệp vụ lõi | `kt2b-nghiep-vu-loi` | ✅ Xong, 10/10 task, **130 test xanh**, đã push |
+| **KT2-C — Tài chính & cổng** | — | 🔨 **Tiếp theo** — chưa lập kế hoạch |
 | KT3 — Tích hợp AI | — | ⬜ Chưa lập kế hoạch |
 | Cuối kỳ | — | ⬜ |
 
-**Việc tiếp theo:** Task 1 của [`docs/superpowers/plans/2026-08-02-kt2b-nghiep-vu-loi.md`](docs/superpowers/plans/2026-08-02-kt2b-nghiep-vu-loi.md) — tầng service và phân quyền lớp 2.
+**Việc tiếp theo:** lập kế hoạch KT2-C — hóa đơn, thanh toán từng phần, thống kê/dashboard, cổng chủ nuôi.
+
+**Đã có sẵn để dùng lại ở KT2-C:** `services/errors.py` (3 lớp ngoại lệ), `activity_log_service.ghi`, mẫu phân quyền lớp 2 ở `owner_service._bat_buoc_quyen_tren_chu_nuoi`, macro nhãn trạng thái `templates/appointments/_trang_thai.html`.
 
 Mỗi nhánh tách từ nhánh trước đó, không tách từ `master`. Khi mở PR nhớ chọn base là nhánh cha.
 
