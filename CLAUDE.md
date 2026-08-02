@@ -35,7 +35,9 @@ Mỗi nhánh tách từ nhánh trước đó, không tách từ `master`. Khi m�
 
 ## Lệnh hay dùng
 
-Python **không có** trong `PATH` của tiến trình chạy sẵn — phải gọi bằng đường dẫn đầy đủ:
+Sinh viên chạy hệ thống bằng cách **bấm đúp `CHAY-HE-THONG.bat`** ở thư mục gốc (file tự tạo `.env`, khởi tạo CSDL, nạp dữ liệu mẫu, mở trình duyệt). Còn `CHAY-KIEM-THU.bat` chạy test và `XOA-DU-LIEU-LAM-LAI.bat` nạp lại dữ liệu từ đầu.
+
+Khi làm việc trong Claude Code thì dùng lệnh trực tiếp. Python **không có** trong `PATH` của tiến trình chạy sẵn — phải gọi bằng đường dẫn đầy đủ:
 
 ```powershell
 # Chạy test (từ thư mục gốc dự án)
@@ -87,6 +89,7 @@ Message nhiều dòng phải ghi ra file rồi `git commit -F <file>` — here-s
 | `Model.query.get()` sinh cảnh báo trên SQLAlchemy 2.x | Dùng `db.session.get(Model, id)` và `db.session.execute(db.select(...))` |
 | Bảng có 2 khóa ngoại cùng trỏ về `users` | Phải chỉ định `foreign_keys=` cho từng quan hệ |
 | Tưởng CSDL nằm ở gốc dự án, xóa nhầm file rỗng còn dữ liệu thật vẫn nguyên | CSDL thật ở `instance/pet_care.db` |
+| Chèn thêm dòng vào bảng Markdown mà để lọt một dòng trống ở giữa | Dòng trống **kết thúc bảng**, phần sau thành bảng mới không có tiêu đề và hiển thị sai. Đã xảy ra với `docs/ai_prompt_log.md` |
 
 ## Nhật ký AI — bắt buộc cập nhật
 

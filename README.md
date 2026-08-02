@@ -72,7 +72,30 @@ Bổ sung lên trên là một lớp AI tạo sinh làm ba việc: sinh tin nh�
 
 ## 5. Cài đặt và chạy
 
-> **Trạng thái:** dự án đang ở mốc KT1 (phân tích & thiết kế). Mã nguồn được xây dựng từ KT2, nên các bước dưới đây áp dụng từ KT2 trở đi.
+### Cách nhanh nhất — bấm đúp file
+
+Ba file `.bat` ở thư mục gốc, bấm đúp là chạy, không cần mở terminal:
+
+| File | Công dụng |
+|---|---|
+| **`CHAY-HE-THONG.bat`** | Khởi động ứng dụng và tự mở trình duyệt. Lần đầu chạy sẽ tự tạo cấu hình và nạp dữ liệu mẫu. |
+| `CHAY-KIEM-THU.bat` | Chạy toàn bộ bộ kiểm thử (~2 phút) |
+| `XOA-DU-LIEU-LAM-LAI.bat` | Xóa CSDL và nạp lại dữ liệu mẫu ban đầu (có hỏi xác nhận) |
+
+Dừng server bằng `Ctrl+C` trong cửa sổ đen vừa mở.
+
+**Tài khoản demo** — mật khẩu đều là `demo1234`:
+
+| Tài khoản | Vai trò |
+|---|---|
+| `admin` | Quản lý — số liệu tổng quan, cấu hình dịch vụ và giá |
+| `letan` | Lễ tân — đặt lịch, ghi hóa đơn, theo dõi nhắc tiêm |
+| `groomer1`, `groomer2` | Nhân viên — chỉ thấy lịch của mình |
+| `chunuoi1`, `chunuoi2` | Chủ nuôi — chỉ thấy thú cưng nhà mình |
+
+### Cách thủ công (dùng terminal)
+
+Chỉ cần khi lần đầu dựng môi trường, hoặc khi file `.bat` báo thiếu môi trường ảo.
 
 ```bash
 # 1. Tạo môi trường ảo
