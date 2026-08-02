@@ -27,4 +27,7 @@ def create_app(config_name='default'):
 
     db.init_app(app)
 
+    # Import để SQLAlchemy biết đủ bảng khi gọi create_all().
+    from backend.app import models  # noqa: F401
+
     return app
