@@ -33,6 +33,9 @@ def create_app(config_name='default'):
     from backend.app.auth.routes import auth_bp
     app.register_blueprint(auth_bp)
 
+    from backend.app.cli import dang_ky_lenh
+    dang_ky_lenh(app)
+
     if app.config.get('TESTING'):
         _dang_ky_route_thu_nghiem(app)
 
