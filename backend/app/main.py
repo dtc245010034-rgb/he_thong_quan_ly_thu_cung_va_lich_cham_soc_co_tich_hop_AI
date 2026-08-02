@@ -35,9 +35,11 @@ def create_app(config_name='default'):
     from backend.app.routers.care_records import care_records_bp
     from backend.app.routers.catalog import catalog_bp
     from backend.app.routers.owners import owners_bp
+    from backend.app.routers.home import home_bp
     from backend.app.routers.pets import pets_bp
     from backend.app.routers.vaccinations import vaccinations_bp
     app.register_blueprint(auth_bp)
+    app.register_blueprint(home_bp)
     app.register_blueprint(owners_bp)
     app.register_blueprint(pets_bp)
     app.register_blueprint(catalog_bp)
