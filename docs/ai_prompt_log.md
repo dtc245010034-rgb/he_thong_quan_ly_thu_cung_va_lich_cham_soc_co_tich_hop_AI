@@ -1,0 +1,52 @@
+# Nhật ký sử dụng AI
+
+Tài liệu này ghi lại mọi lần sử dụng AI tạo sinh trong quá trình làm đồ án, theo mẫu `Prompt.md` mục 11.2. Đây là **minh chứng bắt buộc chấm điểm** (rubric KT1 tiêu chí 9, KT2 tiêu chí 9, KT3 tiêu chí 4 và 9).
+
+## Quy ước ghi
+
+- **Ghi ngay sau mỗi lần dùng AI**, không ghi hồi tố cuối kỳ. Ghi hồi tố sẽ mất chi tiết về những chỗ đã sửa lại kết quả của AI — mà đó lại là phần có giá trị nhất.
+- Cột **Prompt (rút gọn)** ghi 1–2 câu tóm ý, không chép nguyên văn hàng nghìn ký tự.
+- Cột **Đã kiểm chứng/chỉnh sửa** phải mô tả **hành động cụ thể của người làm**: đã đối chiếu với cái gì, đã sửa chỗ nào, đã bác bỏ đề xuất nào. Không ghi chung chung kiểu "đã kiểm tra".
+- Cột **Người thực hiện** ghi mã sinh viên; thay bằng họ tên đầy đủ khi in nộp.
+
+## Ý nghĩa các cột
+
+| Cột | Nội dung |
+|---|---|
+| Ngày | Ngày thực hiện |
+| Giai đoạn | KT1 / KT2 / KT3 / Cuối kỳ |
+| Mục đích | Dùng AI để làm gì |
+| Prompt (rút gọn) | Tóm tắt yêu cầu đã đưa cho AI |
+| Phản hồi AI (tóm tắt) | AI trả về gì |
+| Đã kiểm chứng/chỉnh sửa | Người làm đã đối chiếu, sửa, hoặc bác bỏ những gì |
+| Người thực hiện | Mã sinh viên |
+
+---
+
+## Bảng nhật ký
+
+| Ngày | Giai đoạn | Mục đích | Prompt (rút gọn) | Phản hồi AI (tóm tắt) | Đã kiểm chứng/chỉnh sửa | Người thực hiện |
+|---|---|---|---|---|---|---|
+| 2026-08-02 | KT1 | Phân tích đặc tả, xác định phạm vi hai hạng mục tùy chọn | Đọc `Prompt.md`, xác định phần nào bắt buộc và phần nào mục 15 cho phép bỏ | AI khuyến nghị **bỏ cả hai** phần mở rộng (cổng chủ nuôi tự phục vụ và gói dịch vụ) để giảm tải, lập luận rằng cả hai đều nằm ngoài lõi bắt buộc | **Bác bỏ khuyến nghị.** Quyết định giữ cả hai vì muốn đồ án đầy đủ hơn. Yêu cầu AI thiết kế sao cho hai phần này tách module rõ để cắt được nếu deadline gấp | DTC245010034 |
+| 2026-08-02 | KT1 | Chọn công nghệ frontend | So sánh Jinja2, React SPA, và phương án lai; nêu chi phí và rủi ro từng hướng | AI phân tích ba hướng, ban đầu khuyến nghị Jinja2 vì rẻ nhất và an toàn nhất khi bảo vệ | **Đổi lựa chọn 3 lần trước khi chốt.** Ban đầu chọn phương án lai; sau đó yêu cầu AI phân tích lại React SPA; đối chiếu 40 tiêu chí rubric mục 13 thì thấy không tiêu chí nào thưởng điểm cho SPA, nên chốt Jinja2 | DTC245010034 |
+| 2026-08-02 | KT1 | Kiểm tra cấu trúc thư mục có buộc phải lệch mục 7.2 không | Cây thư mục mục 7.2 giả định frontend tách riêng; hỏi cách xử lý khi chọn Jinja2 | AI đề xuất **bỏ hẳn hai thư mục `backend/` và `frontend/`**, dùng cấu trúc phẳng vì cho rằng `frontend/` sẽ thành thư mục rỗng vô nghĩa | **Phản đối đề xuất** vì muốn bám đặc tả. Sau khi bị phản đối, AI đưa ra phương án thứ ba: giữ nguyên cây 7.2, cho `frontend/` chứa `templates/` và `static/`, Flask trỏ tới bằng một dòng cấu hình. **Phương án cuối cùng chỉ có được nhờ phản đối này** | DTC245010034 |
+| 2026-08-02 | KT1 | Rà soát mô hình dữ liệu mục 6.1 trước khi vẽ ERD | Đối chiếu 14 bảng mục 6.1 với các yêu cầu chức năng mục 3 xem có thiếu gì không | AI phát hiện **mâu thuẫn trong chính đặc tả gốc**: mục 3.7 yêu cầu lập hóa đơn từ *"1 hoặc nhiều lịch hẹn"* nhưng mục 6.1 chỉ cho `invoices` một cột `appointment_id`, tức quan hệ 1-1, không gộp được nhiều lịch hẹn | Đọc lại mục 3.7 và 6.1, **xác nhận mâu thuẫn có thật**. Duyệt phương án chuyển `appointment_id` xuống `invoice_items` và cho phép NULL. Yêu cầu ghi vào mục "Sai khác so với đặc tả" để trả lời được khi bảo vệ | DTC245010034 |
+| 2026-08-02 | KT1 | Tự rà soát tài liệu thiết kế sau khi viết xong | Yêu cầu AI đọc lại tài liệu vừa viết, tìm placeholder, mâu thuẫn nội bộ, chỗ diễn đạt mơ hồ | AI **tự phát hiện ba lỗi của chính mình**: (1) đếm sai số bảng mục 6.1 — nói 13 trong khi thực tế là 14, làm tổng số bảng sai; (2) công thức chia giá gói dịch vụ mơ hồ khi số lượng lớn hơn 1 và không xử lý làm tròn; (3) một quan hệ trong sơ đồ ERD bị vẽ ngược chiều | Đối chiếu lại bảng mục 6.1, **đếm tay xác nhận đúng 14 bảng** nên tổng là 18 chứ không phải 17. Duyệt cả ba sửa đổi trước khi commit | DTC245010034 |
+| 2026-08-02 | KT1 | Lập kế hoạch triển khai chi tiết cho mốc KT1 | Chia công việc KT1 thành các task nhỏ, mỗi task có bước kiểm chứng đếm được | AI chia 7 task, mỗi task một commit. Tự rà soát kế hoạch và phát hiện thêm ba chỗ không nhất quán: số quan hệ ERD ghi 30 nhưng đếm thực tế 29 (thiếu quan hệ cho khóa ngoại `created_by`); bảng tổng kết ghi 8 file nhưng liệt kê 9; sơ đồ ERD trong kế hoạch khác sơ đồ trong tài liệu thiết kế | Kiểm tra lại bằng lệnh đếm tự động: xác nhận sau khi sửa thì 18 thực thể, 30 quan hệ, 30 khóa ngoại **khớp nhau**. Duyệt kế hoạch | DTC245010034 |
+| 2026-08-02 | KT1 | Sinh sơ đồ use case | Vẽ sơ đồ 20 use case cho 5 actor bằng Mermaid | Bản đầu tiên **render ra sai**: chữ tiếng Việt bị hỏng mã và bố cục rối do dồn 20 use case vào một khối duy nhất, đường nối cắt chéo khắp sơ đồ | Yêu cầu sửa. AI xác định nguyên nhân hỏng mã là do PowerShell đọc file UTF-8 bằng bảng mã ANSI, và bố cục hỏng do thiếu phân nhóm. Bản sửa nhóm use case theo lĩnh vực nghiệp vụ, render lại và **kiểm tra bằng mắt trên ảnh xuất ra** trước khi duyệt | DTC245010034 |
+| 2026-08-02 | KT2 | Chia nhỏ khối lượng KT2 | KT2 gồm khoảng 10 mảng nghiệp vụ, hỏi cách tổ chức để không làm một mạch quá dài | AI đề xuất chia **3 kế hoạch**: KT2-A nền tảng, KT2-B nghiệp vụ lõi, KT2-C tài chính và cổng chủ nuôi, mỗi kế hoạch tự tạo ra phần mềm chạy được và kiểm thử được | Duyệt cách chia. Yêu cầu bắt đầu từ KT2-A | DTC245010034 |
+| 2026-08-02 | KT2 | Lập kế hoạch chi tiết KT2-A | Chia KT2-A thành các task nhỏ, mỗi task một vòng TDD đầy đủ | AI lập 9 task, 46 test. Khi tự rà soát lại kế hoạch thì **phát hiện 4 lỗi của chính mình**: (1) Task 8 gọi `url_for('auth.trang_dang_nhap')` nhưng Task 7 không hề đặt tên hàm view đó; (2) dùng `User.query.get()` vốn sinh cảnh báo trên SQLAlchemy 2.x; (3) một test bắt `Exception` chung nên lỗi gõ sai tên trường cũng làm test xanh; (4) hàm nạp dữ liệu mẫu cắt câu theo dấu chấm phẩy nhưng không nêu ràng buộc kèm theo | Duyệt cả 4 sửa đổi. Sinh viên lưu ý điểm (3): test bắt `Exception` chung là test vô nghĩa vì nó xanh cả khi mã sai | DTC245010034 |
+| 2026-08-02 | KT2 | Dựng môi trường Python | Cài Python và thư viện cho dự án | AI cảnh báo trước một rủi ro: Python 3.14 còn mới nên `bcrypt` và `greenlet` có thể chưa có gói dựng sẵn và phải biên dịch. **Rủi ro không xảy ra** — cả hai đều có gói `cp314`. AI cũng phát hiện đường dẫn Python đã vào registry nhưng tiến trình đang chạy chưa nhận | Tự cài Python bằng winget. Xác nhận môi trường thực tế là 3.14.6 chứ không phải 3.13 như kế hoạch dự kiến, yêu cầu AI cập nhật lại kế hoạch và ghim phiên bản thật vào `requirements.txt` | DTC245010034 |
+| 2026-08-02 | KT2 | Sinh 18 model theo quy trình TDD | Viết model cho từng nhóm bảng, mỗi nhóm viết test trước rồi mới viết mã | AI thực hiện đúng vòng đỏ–xanh cho cả 5 nhóm model. Phát sinh một vấn đề không có trong kế hoạch: bảng `appointments` có **hai** khóa ngoại cùng trỏ về `users` (`staff_id` và `created_by`) nên SQLAlchemy không tự suy được quan hệ, phải chỉ định `foreign_keys` thủ công | Kiểm chứng bằng lệnh đếm: `db.metadata.tables` trả đúng **18 bảng**, khớp danh sách trong `docs/erd.md`. Đối chiếu bằng mắt danh sách tên bảng in ra | DTC245010034 |
+| 2026-08-02 | KT2 | Sinh dữ liệu mẫu cho demo | Viết `seed_data.sql` với tối thiểu 5 chủ nuôi, 8 thú cưng, hồ sơ vài tháng | Lần chạy đầu **hỏng ngay**: file có dấu chấm phẩy nằm trong một dòng chú thích, mà hàm nạp lại cắt câu lệnh theo dấu này — đúng cái bẫy AI đã tự viết cảnh báo vào kế hoạch ở bước trước rồi vẫn vấp phải | Yêu cầu sửa và viết lại cảnh báo trong file cho rõ hơn. **Bài học ghi nhận: AI viết ra ràng buộc không có nghĩa là AI sẽ tuân thủ ràng buộc đó** — vẫn phải chạy thử mới biết | DTC245010034 |
+| 2026-08-02 | KT2 | Xác thực và phân quyền | Viết đăng nhập, đăng xuất, decorator phân quyền theo vai trò | AI chủ động đề xuất hai điểm bảo mật ngoài yêu cầu tối thiểu: thông báo lỗi đăng nhập **giống hệt nhau** cho cả ba trường hợp sai tên, sai mật khẩu, tài khoản bị khóa (tránh để lộ tài khoản nào tồn tại); và route thử nghiệm chỉ đăng ký khi bật cờ chạy test nên không tồn tại ở bản chạy thật | Kiểm chứng đầu cuối trên máy: chạy ứng dụng thật, đăng nhập được bằng cả ba loại tài khoản, đăng nhập sai hiện đúng thông báo tiếng Việt, và route thử nghiệm trả 404 ở bản chạy thật | DTC245010034 |
+
+> **Ghi chú về mức độ kiểm chứng ở KT2-A.** Các dòng KT2 phía trên được kiểm chứng chủ yếu bằng **46 test tự động** và một lượt **chạy thử đầu cuối trên máy** (khởi tạo CSDL, nạp dữ liệu mẫu, chạy ứng dụng, đăng nhập qua trình duyệt). Sinh viên cần **đọc lại mã nguồn trong `backend/app/`** và bổ sung nhận xét của mình vào cột kiểm chứng — đặc biệt là `auth/decorators.py` và `auth/routes.py`, vì đây là phần hội đồng hay hỏi trực tiếp.
+
+---
+
+## Ghi chú cho các mốc sau
+
+- **KT2:** ghi lại mỗi lần dùng AI sinh mã nguồn (models, phân quyền, chống trùng lịch, tính hóa đơn). Nêu rõ chỗ nào phải sửa lại vì AI viết sai hoặc phức tạp hóa.
+- **KT3:** rubric tiêu chí 4 yêu cầu **tối thiểu 3 vòng tối ưu prompt**. Mỗi vòng ghi một dòng riêng, kèm so sánh output trước và sau. Rubric tiêu chí 9 yêu cầu ghi lại việc dùng AI để review mã nguồn — nêu rõ AI phát hiện lỗi gì và đã refactor những gì.
+- **Cuối kỳ:** `Prompt.md` mục 15 cảnh báo **không được để AI viết hộ phần đánh giá đạo đức AI mà không đọc lại**, vì hội đồng thường hỏi trực tiếp phần này khi bảo vệ. Đọc kỹ mục 7.6 của [`phan_tich_thiet_ke.md`](phan_tich_thiet_ke.md) và tự nắm được **lý do thiết kế**, không chỉ nội dung.

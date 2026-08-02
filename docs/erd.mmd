@@ -1,0 +1,173 @@
+erDiagram
+    USERS {
+        int id PK
+        string username
+        string password_hash
+        string role
+        int owner_id FK
+        bool is_active
+    }
+    OWNERS {
+        int id PK
+        string full_name
+        string phone
+        bool is_deleted
+    }
+    PETS {
+        int id PK
+        int owner_id FK
+        string name
+        string species
+        text ai_summary_cache
+        bool is_deleted
+    }
+    SERVICES {
+        int id PK
+        string name
+        string category
+        decimal price
+        int duration_minutes
+    }
+    SERVICE_PACKAGES {
+        int id PK
+        string name
+        decimal package_price
+    }
+    PACKAGE_ITEMS {
+        int id PK
+        int package_id FK
+        int service_id FK
+        int quantity
+    }
+    SERVICE_PRICE_HISTORY {
+        int id PK
+        int service_id FK
+        decimal old_price
+        decimal new_price
+        int changed_by FK
+    }
+    APPOINTMENTS {
+        int id PK
+        int pet_id FK
+        int service_id FK
+        int staff_id FK
+        datetime scheduled_at
+        datetime ends_at
+        string status
+        int created_by FK
+    }
+    APPOINTMENT_HISTORY {
+        int id PK
+        int appointment_id FK
+        datetime old_time
+        datetime new_time
+        string reason
+        int changed_by FK
+    }
+    CARE_RECORDS {
+        int id PK
+        int pet_id FK
+        int appointment_id FK
+        int staff_id FK
+        date record_date
+        decimal weight_at_visit
+    }
+    VACCINATION_SCHEDULES {
+        int id PK
+        int pet_id FK
+        string vaccine_name
+        date next_due_date
+        bool is_done
+    }
+    INVOICES {
+        int id PK
+        int owner_id FK
+        string invoice_number
+        decimal discount_amount
+        decimal total_amount
+        string payment_status
+        int created_by FK
+    }
+    INVOICE_ITEMS {
+        int id PK
+        int invoice_id FK
+        int service_id FK
+        int appointment_id FK
+        int package_id FK
+        decimal unit_price
+        decimal line_total
+    }
+    PAYMENTS {
+        int id PK
+        int invoice_id FK
+        decimal amount
+        string method
+        int received_by FK
+    }
+    AI_INTERACTION_LOGS {
+        int id PK
+        string feature_type
+        int user_id FK
+        int pet_id FK
+        string model_used
+        int latency_ms
+        bool was_flagged
+    }
+    ACTIVITY_LOGS {
+        int id PK
+        int actor_user_id FK
+        string action
+        string entity_type
+        int entity_id
+    }
+    APP_SETTINGS {
+        string key PK
+        string value
+        int updated_by FK
+    }
+    NOTIFICATIONS {
+        int id PK
+        int pet_id FK
+        int owner_id FK
+        string reminder_type
+        date due_date
+        string channel
+        string urgency
+    }
+
+    OWNERS ||--o{ USERS : "có tài khoản"
+    OWNERS ||--o{ PETS : "sở hữu"
+    OWNERS ||--o{ INVOICES : "nhận"
+    OWNERS ||--o{ NOTIFICATIONS : "được nhắc"
+
+    USERS ||--o{ APPOINTMENTS : "phụ trách"
+    USERS ||--o{ APPOINTMENTS : "tạo lịch"
+    USERS ||--o{ APPOINTMENT_HISTORY : "đổi lịch"
+    USERS ||--o{ CARE_RECORDS : "ghi hồ sơ"
+    USERS ||--o{ INVOICES : "lập"
+    USERS ||--o{ PAYMENTS : "thu tiền"
+    USERS ||--o{ SERVICE_PRICE_HISTORY : "đổi giá"
+    USERS ||--o{ ACTIVITY_LOGS : "thực hiện"
+    USERS ||--o{ AI_INTERACTION_LOGS : "gọi AI"
+    USERS ||--o{ APP_SETTINGS : "cấu hình"
+
+    PETS ||--o{ APPOINTMENTS : "có lịch"
+    PETS ||--o{ CARE_RECORDS : "có hồ sơ"
+    PETS ||--o{ VACCINATION_SCHEDULES : "có lịch tiêm"
+    PETS ||--o{ NOTIFICATIONS : "sinh nhắc lịch"
+    PETS ||--o{ AI_INTERACTION_LOGS : "liên quan"
+
+    SERVICES ||--o{ APPOINTMENTS : "áp dụng"
+    SERVICES ||--o{ INVOICE_ITEMS : "tính giá"
+    SERVICES ||--o{ PACKAGE_ITEMS : "thuộc gói"
+    SERVICES ||--o{ SERVICE_PRICE_HISTORY : "có lịch sử giá"
+
+    SERVICE_PACKAGES ||--o{ PACKAGE_ITEMS : "gồm"
+    SERVICE_PACKAGES ||--o{ INVOICE_ITEMS : "truy vết gói"
+
+    APPOINTMENTS ||--o{ APPOINTMENT_HISTORY : "bị đổi"
+    APPOINTMENTS ||--o| CARE_RECORDS : "sinh ra"
+    APPOINTMENTS ||--o{ INVOICE_ITEMS : "lên hóa đơn"
+
+    INVOICES ||--o{ INVOICE_ITEMS : "gồm"
+    INVOICES ||--o{ PAYMENTS : "được thanh toán"

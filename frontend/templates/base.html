@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Quản lý Thú cưng{% endblock %}</title>
+  {# Bootstrap nạp từ file tĩnh cục bộ, không dùng CDN, để demo chạy được khi
+     không có mạng. #}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+</head>
+<body class="bg-light">
+  {% block content %}{% endblock %}
+</body>
+</html>
