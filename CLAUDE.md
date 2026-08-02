@@ -21,13 +21,15 @@ Theo đúng thứ tự:
 | Mốc | Nhánh | Trạng thái |
 |---|---|---|
 | KT1 — Tài liệu PTTK | `kt1-tai-lieu-pttk` | ✅ Xong, 7 commit, đã push |
-| KT2-A — Nền tảng | `kt2a-nen-tang` | ✅ Xong, 10 commit, 46 test xanh, đã push |
-| **KT2-B — Nghiệp vụ lõi** | `kt2b-nghiep-vu-loi` | 🔨 **Đang làm** — kế hoạch xong, chưa chạy task nào |
-| KT2-C — Tài chính & cổng | — | ⬜ Chưa lập kế hoạch |
+| KT2-A — Nền tảng | `kt2a-nen-tang` | ✅ Xong, 10 commit, 46 test xanh, đã merge |
+| KT2-B — Nghiệp vụ lõi | `kt2b-nghiep-vu-loi` | ✅ Xong, 10/10 task, **130 test xanh**, đã push |
+| **KT2-C — Tài chính & cổng** | — | 🔨 **Tiếp theo** — chưa lập kế hoạch |
 | KT3 — Tích hợp AI | — | ⬜ Chưa lập kế hoạch |
 | Cuối kỳ | — | ⬜ |
 
-**Việc tiếp theo:** Task 1 của [`docs/superpowers/plans/2026-08-02-kt2b-nghiep-vu-loi.md`](docs/superpowers/plans/2026-08-02-kt2b-nghiep-vu-loi.md) — tầng service và phân quyền lớp 2.
+**Việc tiếp theo:** lập kế hoạch KT2-C — hóa đơn, thanh toán từng phần, thống kê/dashboard, cổng chủ nuôi.
+
+**Đã có sẵn để dùng lại ở KT2-C:** `services/errors.py` (3 lớp ngoại lệ), `activity_log_service.ghi`, mẫu phân quyền lớp 2 ở `owner_service._bat_buoc_quyen_tren_chu_nuoi`, macro nhãn trạng thái `templates/appointments/_trang_thai.html`.
 
 Mỗi nhánh tách từ nhánh trước đó, không tách từ `master`. Khi mở PR nhớ chọn base là nhánh cha.
 
@@ -51,6 +53,8 @@ venv\Scripts\python.exe -m flask --app backend.app.main run
 ```
 
 Môi trường: Python **3.14.6**, cài qua Python Manager của winget ở `%LOCALAPPDATA%\Python\bin`.
+
+**File CSDL nằm ở `instance/pet_care.db`**, không phải thư mục gốc — Flask tự đưa đường dẫn SQLite tương đối vào `instance/`. Muốn nạp lại dữ liệu mẫu từ đầu thì xóa file đó rồi chạy lại `init-db` và `seed-db`.
 
 Tài khoản demo sau khi `seed-db`: `admin`, `letan`, `groomer1`, `groomer2`, `chunuoi1`, `chunuoi2` — mật khẩu đều là `demo1234`.
 
@@ -82,6 +86,7 @@ Message nhiều dòng phải ghi ra file rồi `git commit -F <file>` — here-s
 | `database/seed_data.sql` hỏng vì dấu `;` trong dòng chú thích | Hàm nạp cắt câu theo `;`. Không dùng dấu này ở bất kỳ đâu ngoài dấu kết câu |
 | `Model.query.get()` sinh cảnh báo trên SQLAlchemy 2.x | Dùng `db.session.get(Model, id)` và `db.session.execute(db.select(...))` |
 | Bảng có 2 khóa ngoại cùng trỏ về `users` | Phải chỉ định `foreign_keys=` cho từng quan hệ |
+| Tưởng CSDL nằm ở gốc dự án, xóa nhầm file rỗng còn dữ liệu thật vẫn nguyên | CSDL thật ở `instance/pet_care.db` |
 
 ## Nhật ký AI — bắt buộc cập nhật
 

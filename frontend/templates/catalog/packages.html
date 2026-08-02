@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Gói dịch vụ combo{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Gói dịch vụ combo</h1>
+  <div>
+    <a class="btn btn-outline-secondary" href="{{ url_for('catalog.danh_sach_dich_vu') }}">Bảng giá lẻ</a>
+    {% if nguoi_dung.role.value == 'admin' %}
+    <a class="btn btn-primary" href="{{ url_for('catalog.them_goi') }}">Thêm gói</a>
+    {% endif %}
+  </div>
+</div>
+
+{% if danh_sach %}
+{% for goi in danh_sach %}
+{% set tong_le = goi.items | sum(attribute='service.price') %}
+<div class="card bg-white mb-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <div>
+        <h2 class="h6 mb-1">{{ goi.name }}</h2>
+        <p class="text-secondary small mb-2">{{ goi.description or '' }}</p>
+      </div>
+      <div class="text-end">
+        <div class="fs-5 fw-semibold">{{ '{:,.0f}'.format(goi.package_price) }} đ</div>
+        <div class="small text-secondary text-decoration-line-through">
+          {{ '{:,.0f}'.format(tong_le) }} đ
+        </div>
+      </div>
+    </div>
+    <ul class="mb-0 small">
+      {% for item in goi.items %}
+      <li>{{ item.service.name }}
+        {%- if item.quantity > 1 %} × {{ item.quantity }}{% endif %}
+        — {{ '{:,.0f}'.format(item.service.price) }} đ</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endfor %}
+{% else %}
+<p class="text-secondary">Chưa có gói dịch vụ nào.</p>
+{% endif %}
+{% endblock %}

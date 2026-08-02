@@ -9,6 +9,46 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 </head>
 <body class="bg-light">
+
+{% if nguoi_dung %}
+<nav class="navbar navbar-expand navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="{{ url_for('home.trang_chu') }}">🐾 Quản lý Thú cưng</a>
+    <ul class="navbar-nav me-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('owners.danh_sach_chu_nuoi') }}">Chủ nuôi</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('pets.danh_sach_thu_cung') }}">Thú cưng</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('appointments.danh_sach_lich_hen') }}">Lịch hẹn</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('vaccinations.danh_sach_nhac_tiem') }}">Tiêm phòng</a>
+      </li>
+      {# Chủ nuôi không thấy bảng giá nội bộ. Lễ tân và nhân viên xem được để
+         tư vấn khách, nhưng chỉ quản lý mới sửa được (mục 3.1 đặc tả). #}
+      {% if nguoi_dung.role.value in ['admin', 'receptionist', 'staff'] %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('catalog.danh_sach_dich_vu') }}">Dịch vụ</a>
+      </li>
+      {% endif %}
+    </ul>
+    <span class="navbar-text me-3">
+      {{ nguoi_dung.full_name or nguoi_dung.username }}
+      <span class="badge bg-secondary">{{ vai_tro_tieng_viet }}</span>
+    </span>
+    <form method="post" action="{{ url_for('auth.dang_xuat') }}" class="d-inline">
+      <button class="btn btn-sm btn-outline-light" type="submit">Đăng xuất</button>
+    </form>
+  </div>
+</nav>
+{% endif %}
+
+<div class="container py-4">
   {% block content %}{% endblock %}
+</div>
+
 </body>
 </html>

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Thêm lịch tiêm phòng{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">Thêm lịch tiêm phòng</h1>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<div class="alert alert-info">
+  Hệ thống chỉ <strong>nhắc lịch</strong>. Việc tiêm thực tế do phòng khám thú y
+  bên ngoài thực hiện — đây không phải hồ sơ y tế đầy đủ.
+</div>
+
+<form method="post" class="card p-4 bg-white" style="max-width: 640px;">
+  <div class="mb-3">
+    <label class="form-label" for="pet_id">Thú cưng <span class="text-danger">*</span></label>
+    <select class="form-select" id="pet_id" name="pet_id" required>
+      <option value="">— Chọn thú cưng —</option>
+      {% for p in thu_cung %}
+      <option value="{{ p.id }}"
+        {% if form is defined and form.pet_id|string == p.id|string %}selected{% endif %}>
+        {{ p.name }} — {{ p.owner.full_name }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="vaccine_name">Tên vắc-xin <span class="text-danger">*</span></label>
+    <input class="form-control" id="vaccine_name" name="vaccine_name" required
+           placeholder="Ví dụ: Dại, 7 bệnh"
+           value="{{ form.vaccine_name if form is defined else '' }}">
+  </div>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="last_date">Ngày tiêm gần nhất</label>
+      <input class="form-control" id="last_date" name="last_date" type="date"
+             value="{{ form.last_date if form is defined else '' }}">
+    </div>
+    <div class="col-md-6 mb-4">
+      <label class="form-label" for="next_due_date">Ngày đến hạn tiếp theo <span class="text-danger">*</span></label>
+      <input class="form-control" id="next_due_date" name="next_due_date" type="date" required
+             value="{{ form.next_due_date if form is defined else '' }}">
+    </div>
+  </div>
+  <div>
+    <button class="btn btn-primary" type="submit">Lưu</button>
+    <a class="btn btn-link" href="{{ url_for('vaccinations.danh_sach_nhac_tiem') }}">Hủy</a>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% from "appointments/_trang_thai.html" import nhan %}
+
+{% set TEN_TT = {'pending': 'Chờ xác nhận', 'confirmed': 'Đã xác nhận',
+                 'completed': 'Hoàn thành', 'cancelled': 'Đã hủy'} %}
+
+{% block title %}Lịch hẹn{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Lịch hẹn</h1>
+  {% if nguoi_dung.role.value in ['admin', 'receptionist'] %}
+  <a class="btn btn-primary" href="{{ url_for('appointments.dat_lich_hen') }}">Đặt lịch</a>
+  {% endif %}
+</div>
+
+{% if nguoi_dung.role.value == 'staff' %}
+<p class="text-secondary small">Bạn đang xem lịch do mình phụ trách.</p>
+{% elif nguoi_dung.role.value == 'owner' %}
+<p class="text-secondary small">Bạn đang xem lịch của thú cưng nhà mình.</p>
+{% endif %}
+
+<form class="row g-2 mb-3" method="get">
+  <div class="col-auto">
+    <label class="form-label small mb-0" for="tu_ngay">Từ ngày</label>
+    <input class="form-control form-control-sm" type="date" id="tu_ngay" name="tu_ngay" value="{{ tu_ngay }}">
+  </div>
+  <div class="col-auto">
+    <label class="form-label small mb-0" for="den_ngay">Đến ngày</label>
+    <input class="form-control form-control-sm" type="date" id="den_ngay" name="den_ngay" value="{{ den_ngay }}">
+  </div>
+  <div class="col-auto">
+    <label class="form-label small mb-0" for="trang_thai">Trạng thái</label>
+    <select class="form-select form-select-sm" id="trang_thai" name="trang_thai">
+      <option value="">Tất cả</option>
+      {% for tt in cac_trang_thai %}
+      <option value="{{ tt.value }}" {% if trang_thai_chon == tt.value %}selected{% endif %}>
+        {{ TEN_TT.get(tt.value, tt.value) }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto align-self-end">
+    <button class="btn btn-sm btn-outline-secondary" type="submit">Lọc</button>
+    <a class="btn btn-sm btn-link" href="{{ url_for('appointments.danh_sach_lich_hen') }}">Xóa lọc</a>
+  </div>
+</form>
+
+{% if danh_sach %}
+<div class="table-responsive">
+  <table class="table table-hover bg-white align-middle">
+    <thead>
+      <tr><th>Thời gian</th><th>Thú cưng</th><th>Dịch vụ</th>
+          <th>Nhân viên</th><th>Trạng thái</th></tr>
+    </thead>
+    <tbody>
+      {% for lh in danh_sach %}
+      <tr>
+        <td>
+          <a href="{{ url_for('appointments.chi_tiet_lich_hen', appointment_id=lh.id) }}">
+            {{ lh.scheduled_at.strftime('%H:%M %d/%m/%Y') }}
+          </a>
+          <div class="small text-secondary">đến {{ lh.ends_at.strftime('%H:%M') }}</div>
+        </td>
+        <td>{{ lh.pet.name }}<div class="small text-secondary">{{ lh.pet.owner.full_name }}</div></td>
+        <td>{{ lh.service.name }}</td>
+        <td>{{ lh.staff.full_name or lh.staff.username if lh.staff else '—' }}</td>
+        <td>{{ nhan(lh.status) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-secondary">Không có lịch hẹn nào khớp điều kiện lọc.</p>
+{% endif %}
+{% endblock %}

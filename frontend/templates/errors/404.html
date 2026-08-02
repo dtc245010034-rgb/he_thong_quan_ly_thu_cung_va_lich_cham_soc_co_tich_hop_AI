@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Không tìm thấy{% endblock %}
+
+{% block content %}
+<div class="card bg-white" style="max-width: 640px;">
+  <div class="card-body p-4">
+    <h1 class="h4">Không tìm thấy nội dung</h1>
+    <p class="text-secondary">
+      {{ thong_diep or 'Đường dẫn bạn truy cập không tồn tại hoặc dữ liệu đã bị xóa.' }}
+    </p>
+    <a class="btn btn-primary" href="{{ url_for('home.trang_chu') }}">Về trang chủ</a>
+  </div>
+</div>
+{% endblock %}

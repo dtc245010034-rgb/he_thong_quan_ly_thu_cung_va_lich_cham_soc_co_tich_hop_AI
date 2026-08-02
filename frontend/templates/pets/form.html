@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% set dang_sua = pet is not none %}
+{% set gia_tri = form if form is defined else pet %}
+
+{% block title %}{{ 'Sửa' if dang_sua else 'Thêm' }} thú cưng{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">{{ 'Sửa hồ sơ thú cưng' if dang_sua else 'Thêm thú cưng mới' }}</h1>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<form method="post" class="card p-4 bg-white" style="max-width: 720px;">
+  <div class="mb-3">
+    <label class="form-label" for="owner_id">Chủ nuôi <span class="text-danger">*</span></label>
+    <select class="form-select" id="owner_id" name="owner_id" required>
+      <option value="">— Chọn chủ nuôi —</option>
+      {% for chu in chu_nuoi %}
+      <option value="{{ chu.id }}"
+        {% if gia_tri and (gia_tri.owner_id|string) == (chu.id|string) %}selected{% endif %}>
+        {{ chu.full_name }} — {{ chu.phone }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="name">Tên thú cưng <span class="text-danger">*</span></label>
+      <input class="form-control" id="name" name="name" required
+             value="{{ (gia_tri.name if gia_tri else '') or '' }}">
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="species">Loài <span class="text-danger">*</span></label>
+      <input class="form-control" id="species" name="species" required
+             placeholder="chó, mèo…"
+             value="{{ (gia_tri.species if gia_tri else '') or '' }}">
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="breed">Giống</label>
+      <input class="form-control" id="breed" name="breed"
+             value="{{ (gia_tri.breed if gia_tri else '') or '' }}">
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="gender">Giới tính</label>
+      <input class="form-control" id="gender" name="gender" placeholder="đực, cái"
+             value="{{ (gia_tri.gender if gia_tri else '') or '' }}">
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="birth_date">Ngày sinh</label>
+      <input class="form-control" id="birth_date" name="birth_date" type="date"
+             value="{{ (gia_tri.birth_date if gia_tri else '') or '' }}">
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="weight">Cân nặng (kg)</label>
+      <input class="form-control" id="weight" name="weight" type="number" step="0.01"
+             value="{{ (gia_tri.weight if gia_tri else '') or '' }}">
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="color">Màu lông</label>
+      <input class="form-control" id="color" name="color"
+             value="{{ (gia_tri.color if gia_tri else '') or '' }}">
+    </div>
+  </div>
+  <div class="mb-4">
+    <label class="form-label" for="notes">Ghi chú đặc điểm</label>
+    <textarea class="form-control" id="notes" name="notes" rows="2"
+              placeholder="Dị ứng, tính khí…">{{ (gia_tri.notes if gia_tri else '') or '' }}</textarea>
+  </div>
+  <div>
+    <button class="btn btn-primary" type="submit">Lưu</button>
+    <a class="btn btn-link" href="{{ url_for('pets.danh_sach_thu_cung') }}">Hủy</a>
+  </div>
+</form>
+{% endblock %}

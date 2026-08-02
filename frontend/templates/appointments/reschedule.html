@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Đổi lịch hẹn #{{ lich.id }}{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">Đổi lịch hẹn #{{ lich.id }}</h1>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<div class="alert alert-secondary">
+  <strong>Giờ hiện tại:</strong>
+  {{ lich.scheduled_at.strftime('%H:%M %d/%m/%Y') }} — {{ lich.ends_at.strftime('%H:%M') }}
+  · {{ lich.pet.name }} · {{ lich.service.name }}
+  <div class="small mt-1">
+    Sau khi đổi, lịch quay về trạng thái <em>chờ xác nhận</em> — giờ mới cần
+    được xác nhận lại với khách.
+  </div>
+</div>
+
+<form method="post" class="card p-4 bg-white" style="max-width: 640px;">
+  <div class="mb-3">
+    <label class="form-label" for="scheduled_at">Thời gian mới <span class="text-danger">*</span></label>
+    <input class="form-control" id="scheduled_at" name="scheduled_at"
+           type="datetime-local" required style="max-width: 280px;"
+           value="{{ form.scheduled_at if form is defined else lich.scheduled_at.strftime('%Y-%m-%dT%H:%M') }}">
+  </div>
+  <div class="mb-4">
+    <label class="form-label" for="ly_do">Lý do đổi lịch <span class="text-danger">*</span></label>
+    <input class="form-control" id="ly_do" name="ly_do" required
+           placeholder="Ví dụ: khách yêu cầu dời sang cuối tuần"
+           value="{{ form.ly_do if form is defined else '' }}">
+    <div class="form-text">Lý do được lưu vào lịch sử đổi lịch để tra cứu về sau.</div>
+  </div>
+  <div>
+    <button class="btn btn-primary" type="submit">Lưu thay đổi</button>
+    <a class="btn btn-link" href="{{ url_for('appointments.chi_tiet_lich_hen', appointment_id=lich.id) }}">Hủy bỏ</a>
+  </div>
+</form>
+{% endblock %}

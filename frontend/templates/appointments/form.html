@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Đặt lịch hẹn{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">Đặt lịch hẹn</h1>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<form method="post" class="card p-4 bg-white" style="max-width: 720px;">
+  <div class="mb-3">
+    <label class="form-label" for="pet_id">Thú cưng <span class="text-danger">*</span></label>
+    <select class="form-select" id="pet_id" name="pet_id" required>
+      <option value="">— Chọn thú cưng —</option>
+      {% for p in thu_cung %}
+      <option value="{{ p.id }}"
+        {% if form is defined and form.pet_id|string == p.id|string %}selected{% endif %}>
+        {{ p.name }} — {{ p.owner.full_name }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="service_id">Dịch vụ <span class="text-danger">*</span></label>
+    <select class="form-select" id="service_id" name="service_id" required>
+      <option value="">— Chọn dịch vụ —</option>
+      {% for dv in dich_vu %}
+      <option value="{{ dv.id }}"
+        {% if form is defined and form.service_id|string == dv.id|string %}selected{% endif %}>
+        {{ dv.name }} — {{ dv.duration_minutes }} phút — {{ '{:,.0f}'.format(dv.price) }} đ
+      </option>
+      {% endfor %}
+    </select>
+    <div class="form-text">Giờ kết thúc được tính tự động theo thời lượng dịch vụ.</div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="staff_id">Nhân viên phụ trách</label>
+    <select class="form-select" id="staff_id" name="staff_id">
+      <option value="">— Chưa phân công —</option>
+      {% for nv in nhan_vien %}
+      <option value="{{ nv.id }}"
+        {% if form is defined and form.staff_id|string == nv.id|string %}selected{% endif %}>
+        {{ nv.full_name or nv.username }}
+      </option>
+      {% endfor %}
+    </select>
+    <div class="form-text">Để trống thì hệ thống không kiểm tra trùng lịch.</div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="scheduled_at">Thời gian bắt đầu <span class="text-danger">*</span></label>
+    <input class="form-control" id="scheduled_at" name="scheduled_at"
+           type="datetime-local" required style="max-width: 280px;"
+           value="{{ form.scheduled_at if form is defined else '' }}">
+  </div>
+
+  <div class="mb-4">
+    <label class="form-label" for="notes">Ghi chú</label>
+    <textarea class="form-control" id="notes" name="notes" rows="2">{{ form.notes if form is defined else '' }}</textarea>
+  </div>
+
+  <div>
+    <button class="btn btn-primary" type="submit">Đặt lịch</button>
+    <a class="btn btn-link" href="{{ url_for('appointments.danh_sach_lich_hen') }}">Hủy</a>
+  </div>
+</form>
+{% endblock %}

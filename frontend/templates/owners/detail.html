@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}{{ chu.full_name }} — Chủ nuôi{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">{{ chu.full_name }}</h1>
+  {% if nguoi_dung.role.value in ['admin', 'receptionist'] %}
+  <div>
+    <a class="btn btn-outline-primary" href="{{ url_for('owners.sua_chu_nuoi', owner_id=chu.id) }}">Sửa</a>
+    {# Xác nhận trước khi xóa — yêu cầu trải nghiệm mục 4 đặc tả. #}
+    <form method="post" action="{{ url_for('owners.xoa_chu_nuoi', owner_id=chu.id) }}"
+          class="d-inline"
+          onsubmit="return confirm('Xóa hồ sơ chủ nuôi {{ chu.full_name }}? Thú cưng, lịch hẹn và hóa đơn liên quan vẫn được giữ lại.');">
+      <button class="btn btn-outline-danger" type="submit">Xóa</button>
+    </form>
+  </div>
+  {% endif %}
+</div>
+
+<div class="card bg-white mb-4">
+  <div class="card-body">
+    <dl class="row mb-0">
+      <dt class="col-sm-3">Số điện thoại</dt><dd class="col-sm-9">{{ chu.phone }}</dd>
+      <dt class="col-sm-3">Email</dt><dd class="col-sm-9">{{ chu.email or '—' }}</dd>
+      <dt class="col-sm-3">Địa chỉ</dt><dd class="col-sm-9">{{ chu.address or '—' }}</dd>
+    </dl>
+  </div>
+</div>
+
+<h2 class="h5 mb-3">Thú cưng ({{ thu_cung|length }})</h2>
+{% if thu_cung %}
+<div class="list-group">
+  {% for pet in thu_cung %}
+  <a class="list-group-item list-group-item-action"
+     href="{{ url_for('pets.chi_tiet_thu_cung', pet_id=pet.id) }}">
+    <strong>{{ pet.name }}</strong>
+    <span class="text-secondary">— {{ pet.species }}{% if pet.breed %}, {{ pet.breed }}{% endif %}</span>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-secondary">Chủ nuôi này chưa có thú cưng nào.</p>
+{% endif %}
+{% endblock %}

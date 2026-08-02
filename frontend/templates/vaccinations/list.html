@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% set NHAN = {'da_tiem': ('success', 'Đã tiêm'),
+               'qua_han': ('danger', 'Quá hạn'),
+               'sap_den_han': ('warning text-dark', 'Sắp đến hạn'),
+               'binh_thuong': ('secondary', 'Bình thường')} %}
+
+{% block title %}Tiêm phòng{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">
+    {% if pet is defined %}Lịch tiêm — {{ pet.name }}{% else %}Nhắc tiêm phòng{% endif %}
+  </h1>
+  {% if nguoi_dung.role.value in ['admin', 'receptionist'] %}
+  <a class="btn btn-primary" href="{{ url_for('vaccinations.them_lich_tiem') }}">Thêm lịch tiêm</a>
+  {% endif %}
+</div>
+
+{% if pet is not defined %}
+<p class="text-secondary small">
+  Danh sách gồm các mũi <strong>sắp đến hạn</strong> và <strong>đã quá hạn</strong>,
+  tính theo ngày hôm nay ({{ hom_nay.strftime('%d/%m/%Y') }}).
+  Trạng thái được tính lúc xem, không lưu trong cơ sở dữ liệu.
+</p>
+{% endif %}
+
+{% if dong %}
+<div class="table-responsive">
+  <table class="table table-hover bg-white align-middle">
+    <thead>
+      <tr><th>Thú cưng</th><th>Vắc-xin</th><th>Tiêm lần cuối</th>
+          <th>Đến hạn</th><th>Trạng thái</th>
+          {% if nguoi_dung.role.value in ['admin', 'receptionist'] %}<th></th>{% endif %}</tr>
+    </thead>
+    <tbody>
+      {% for d in dong %}
+      {% set mau, ten = NHAN.get(d.trang_thai, ('secondary', d.trang_thai)) %}
+      <tr>
+        <td>
+          <a href="{{ url_for('pets.chi_tiet_thu_cung', pet_id=d.lich.pet_id) }}">{{ d.lich.pet.name }}</a>
+          <div class="small text-secondary">{{ d.lich.pet.owner.full_name }} — {{ d.lich.pet.owner.phone }}</div>
+        </td>
+        <td>{{ d.lich.vaccine_name }}</td>
+        <td>{{ d.lich.last_date.strftime('%d/%m/%Y') if d.lich.last_date else '—' }}</td>
+        <td>{{ d.lich.next_due_date.strftime('%d/%m/%Y') }}</td>
+        <td><span class="badge bg-{{ mau }}">{{ ten }}</span></td>
+        {% if nguoi_dung.role.value in ['admin', 'receptionist'] %}
+        <td class="text-end">
+          {% if not d.lich.is_done %}
+          <form method="post" action="{{ url_for('vaccinations.danh_dau_da_tiem', vaccination_id=d.lich.id) }}"
+                onsubmit="return confirm('Đánh dấu đã tiêm {{ d.lich.vaccine_name }} cho {{ d.lich.pet.name }}? Hệ thống sẽ tự hẹn mũi nhắc lại sau 1 năm.');">
+            <button class="btn btn-sm btn-outline-success" type="submit">Đã tiêm</button>
+          </form>
+          {% endif %}
+        </td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-secondary">
+  {% if pet is defined %}Thú cưng này chưa có lịch tiêm nào.
+  {% else %}Không có mũi tiêm nào sắp đến hạn hoặc quá hạn.{% endif %}
+</p>
+{% endif %}
+{% endblock %}

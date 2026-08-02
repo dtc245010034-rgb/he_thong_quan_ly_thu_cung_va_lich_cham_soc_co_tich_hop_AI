@@ -1,0 +1,9 @@
+{# Nhãn trạng thái lịch hẹn, dùng lại ở nhiều màn hình.
+   Gọi bằng: {% from "appointments/_trang_thai.html" import nhan %} #}
+{% macro nhan(trang_thai) %}
+{%- set mau = {'pending': 'warning text-dark', 'confirmed': 'primary',
+               'completed': 'success', 'cancelled': 'secondary'} -%}
+{%- set ten = {'pending': 'Chờ xác nhận', 'confirmed': 'Đã xác nhận',
+               'completed': 'Hoàn thành', 'cancelled': 'Đã hủy'} -%}
+<span class="badge bg-{{ mau.get(trang_thai.value, 'secondary') }}">{{ ten.get(trang_thai.value, trang_thai.value) }}</span>
+{%- endmacro %}

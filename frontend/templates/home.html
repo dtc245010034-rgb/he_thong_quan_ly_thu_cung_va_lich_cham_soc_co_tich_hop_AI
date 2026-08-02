@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% from "appointments/_trang_thai.html" import nhan %}
+
+{% block title %}Trang chủ — Quản lý Thú cưng{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-1">Xin chào, {{ nguoi_dung.full_name or nguoi_dung.username }}</h1>
+<p class="text-secondary">{{ hom_nay.strftime('%d/%m/%Y') }}</p>
+
+{# ----- Quản lý: số liệu tổng quan ----- #}
+{% if so_lieu is defined %}
+<h2 class="h6 mt-4 mb-2">Tổng quan</h2>
+<div class="row g-3 mb-4">
+  {% for nhan_o, gia_tri in [('Chủ nuôi', so_lieu.chu_nuoi),
+                             ('Thú cưng', so_lieu.thu_cung),
+                             ('Dịch vụ đang bán', so_lieu.dich_vu),
+                             ('Lịch hẹn hôm nay', so_lieu.lich_hom_nay)] %}
+  <div class="col-6 col-md-3">
+    <div class="card bg-white h-100">
+      <div class="card-body">
+        <div class="fs-3 fw-semibold">{{ gia_tri }}</div>
+        <div class="small text-secondary">{{ nhan_o }}</div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{# ----- Lịch hôm nay: quản lý, lễ tân, nhân viên ----- #}
+{% if lich_hom_nay is defined %}
+<h2 class="h6 mt-4 mb-2">
+  {% if nguoi_dung.role.value == 'staff' %}Lịch của tôi hôm nay{% else %}Lịch hẹn hôm nay{% endif %}
+</h2>
+{% if lich_hom_nay %}
+<div class="table-responsive mb-4">
+  <table class="table table-sm table-hover bg-white align-middle">
+    <thead><tr><th>Giờ</th><th>Thú cưng</th><th>Dịch vụ</th><th>Nhân viên</th><th>Trạng thái</th></tr></thead>
+    <tbody>
+      {% for lh in lich_hom_nay %}
+      <tr>
+        <td><a href="{{ url_for('appointments.chi_tiet_lich_hen', appointment_id=lh.id) }}">{{ lh.scheduled_at.strftime('%H:%M') }}</a></td>
+        <td>{{ lh.pet.name }}<div class="small text-secondary">{{ lh.pet.owner.full_name }}</div></td>
+        <td>{{ lh.service.name }}</td>
+        <td>{{ lh.staff.full_name or lh.staff.username if lh.staff else '—' }}</td>
+        <td>{{ nhan(lh.status) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-secondary mb-4">Hôm nay không có lịch hẹn nào.</p>
+{% endif %}
+{% endif %}
+
+{# ----- Chủ nuôi: thú cưng và lịch sắp tới ----- #}
+{% if thu_cung is defined %}
+<h2 class="h6 mt-4 mb-2">Thú cưng của tôi</h2>
+{% if thu_cung %}
+<div class="row g-3 mb-4">
+  {% for p in thu_cung %}
+  <div class="col-md-4">
+    <div class="card bg-white h-100">
+      <div class="card-body">
+        <h3 class="h6 mb-1">
+          <a href="{{ url_for('pets.chi_tiet_thu_cung', pet_id=p.id) }}">{{ p.name }}</a>
+        </h3>
+        <div class="small text-secondary">
+          {{ p.species }}{% if p.breed %} — {{ p.breed }}{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-secondary mb-4">Bạn chưa có thú cưng nào trong hệ thống.</p>
+{% endif %}
+
+<h2 class="h6 mt-4 mb-2">Lịch hẹn sắp tới</h2>
+{% if lich_sap_toi %}
+<ul class="list-group mb-4">
+  {% for lh in lich_sap_toi %}
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <span>
+      <a href="{{ url_for('appointments.chi_tiet_lich_hen', appointment_id=lh.id) }}">
+        {{ lh.scheduled_at.strftime('%H:%M %d/%m/%Y') }}
+      </a>
+      — {{ lh.pet.name }} · {{ lh.service.name }}
+    </span>
+    {{ nhan(lh.status) }}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="text-secondary mb-4">Chưa có lịch hẹn nào sắp tới.</p>
+{% endif %}
+{% endif %}
+
+{# ----- Nhắc tiêm: quản lý, lễ tân, chủ nuôi ----- #}
+{% if nhac_tiem is defined %}
+<h2 class="h6 mt-4 mb-2">
+  Tiêm phòng cần chú ý
+  {% if nhac_tiem %}<span class="badge bg-danger">{{ nhac_tiem|length }}</span>{% endif %}
+</h2>
+{% if nhac_tiem %}
+<ul class="list-group mb-4">
+  {% for lt in nhac_tiem %}
+  <li class="list-group-item">
+    <strong>{{ lt.pet.name }}</strong> — {{ lt.vaccine_name }},
+    đến hạn {{ lt.next_due_date.strftime('%d/%m/%Y') }}
+    {% if lt.next_due_date < hom_nay %}
+    <span class="badge bg-danger">Quá hạn</span>
+    {% else %}
+    <span class="badge bg-warning text-dark">Sắp đến hạn</span>
+    {% endif %}
+    {% if nguoi_dung.role.value in ['admin', 'receptionist'] %}
+    <div class="small text-secondary">
+      Chủ nuôi: {{ lt.pet.owner.full_name }} — {{ lt.pet.owner.phone }}
+    </div>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+<a class="btn btn-sm btn-outline-secondary" href="{{ url_for('vaccinations.danh_sach_nhac_tiem') }}">Xem tất cả</a>
+{% else %}
+<p class="text-secondary">Không có mũi tiêm nào sắp đến hạn hoặc quá hạn.</p>
+{% endif %}
+{% endif %}
+{% endblock %}
