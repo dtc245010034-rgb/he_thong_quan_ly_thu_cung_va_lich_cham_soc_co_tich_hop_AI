@@ -7,8 +7,8 @@ nhỏ hơn hoặc bằng.
 from datetime import datetime, timedelta
 
 from backend.app.extensions import db
-from backend.app.models import (Appointment, AppointmentStatus, Pet, Service,
-                                UserRole)
+from backend.app.models import (Appointment, AppointmentHistory,
+                                AppointmentStatus, Pet, Service, UserRole)
 from backend.app.services import activity_log_service
 from backend.app.services.errors import (DuLieuKhongHopLe,
                                          QuyenTruyCapBiTuChoi, TrungLichHen)
@@ -18,6 +18,15 @@ from backend.app.services.errors import (DuLieuKhongHopLe,
 _TRANG_THAI_CHIEM_CHO = (AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED)
 
 _VAI_TRO_DAT_LICH = (UserRole.ADMIN, UserRole.RECEPTIONIST)
+
+# Bốn lý do hủy lịch theo mục 3.4 đặc tả. Dùng danh sách cố định thay vì text
+# tự do để báo cáo thống kê lý do hủy có ý nghĩa.
+LY_DO_HUY = {
+    'khach_yeu_cau': 'Khách yêu cầu',
+    'nhan_vien_ban': 'Nhân viên bận',
+    'thu_cung_om': 'Thú cưng ốm',
+    'khac': 'Khác',
+}
 
 
 def _bat_buoc_vai_tro_dat_lich(current_user):
@@ -180,6 +189,97 @@ def xac_nhan(appointment_id, current_user):
     lich.status = AppointmentStatus.CONFIRMED
     activity_log_service.ghi(current_user, 'xac_nhan_lich_hen', 'appointments',
                              lich.id, 'Xác nhận lịch hẹn')
+    return lich
+
+
+def doi_lich(appointment_id, gio_moi, ly_do, current_user):
+    """Đổi lịch hẹn sang giờ mới.
+
+    Cập nhật TẠI CHỖ, không tạo bản ghi mới và enum không có trạng thái
+    'rescheduled' (sai khác ⑥). Nhờ vậy mỗi buổi hẹn thật luôn tương ứng
+    đúng một dòng, hóa đơn và hồ sơ chăm sóc trỏ tới id ổn định, và báo cáo
+    số lượt dịch vụ không phải lọc trạng thái rác.
+
+    Mỗi lần đổi ghi một dòng vào appointment_history. Số lần đổi của một
+    lịch hẹn đếm từ bảng đó.
+    """
+    _bat_buoc_vai_tro_dat_lich(current_user)
+    lich = lay_theo_id(appointment_id, current_user)
+
+    if lich.status not in _TRANG_THAI_CHIEM_CHO:
+        raise DuLieuKhongHopLe(
+            'Chỉ đổi được lịch hẹn chưa hoàn thành và chưa bị hủy'
+        )
+    if not isinstance(gio_moi, datetime):
+        raise DuLieuKhongHopLe('Phải chọn thời gian mới hợp lệ')
+    if gio_moi < datetime.now():
+        raise DuLieuKhongHopLe('Không thể đổi lịch sang thời điểm đã qua')
+    if not (ly_do or '').strip():
+        raise DuLieuKhongHopLe('Phải nhập lý do đổi lịch')
+
+    ket_thuc_moi = gio_moi + timedelta(minutes=lich.service.duration_minutes)
+
+    # bo_qua_id để bản ghi đang sửa không tự chặn chính nó. Thiếu tham số này
+    # thì mọi lần dời lịch một chút đều bị chặn bởi chính nó.
+    lich_trung = _tim_lich_trung(lich.staff_id, gio_moi, ket_thuc_moi,
+                                 bo_qua_id=lich.id)
+    if lich_trung is not None:
+        _bao_trung_lich(lich_trung)
+
+    gio_cu = lich.scheduled_at
+
+    db.session.add(AppointmentHistory(
+        appointment_id=lich.id,
+        old_time=gio_cu,
+        new_time=gio_moi,
+        reason=ly_do.strip(),
+        changed_by=current_user.id,
+    ))
+
+    lich.scheduled_at = gio_moi
+    lich.ends_at = ket_thuc_moi
+    # Giờ mới phải được xác nhận lại, không kế thừa xác nhận của giờ cũ.
+    lich.status = AppointmentStatus.PENDING
+
+    activity_log_service.ghi(
+        current_user, 'doi_lich_hen', 'appointments', lich.id,
+        f'Đổi lịch từ {gio_cu:%H:%M %d/%m/%Y} sang '
+        f'{gio_moi:%H:%M %d/%m/%Y}, lý do: {ly_do.strip()}')
+    return lich
+
+
+def huy_lich(appointment_id, ly_do, mo_ta, current_user):
+    """Hủy lịch hẹn. Lý do là BẮT BUỘC (mục 3.4 đặc tả).
+
+    ly_do phải là một khóa trong LY_DO_HUY. Nếu chọn 'khac' thì bắt buộc
+    nhập mô tả, nếu không thì lý do trở nên vô nghĩa khi tra cứu về sau.
+    """
+    _bat_buoc_vai_tro_dat_lich(current_user)
+    lich = lay_theo_id(appointment_id, current_user)
+
+    if lich.status not in _TRANG_THAI_CHIEM_CHO:
+        raise DuLieuKhongHopLe(
+            'Chỉ hủy được lịch hẹn chưa hoàn thành và chưa bị hủy'
+        )
+    if not (ly_do or '').strip():
+        raise DuLieuKhongHopLe('Phải chọn lý do hủy lịch')
+    if ly_do not in LY_DO_HUY:
+        raise DuLieuKhongHopLe(
+            'Lý do hủy không hợp lệ. Chọn một trong: '
+            + ', '.join(LY_DO_HUY.values())
+        )
+    if ly_do == 'khac' and not (mo_ta or '').strip():
+        raise DuLieuKhongHopLe(
+            'Chọn lý do "Khác" thì phải nhập mô tả cụ thể'
+        )
+
+    lich.status = AppointmentStatus.CANCELLED
+
+    chi_tiet = f'Hủy lịch hẹn, lý do: {ly_do}'
+    if mo_ta and mo_ta.strip():
+        chi_tiet += f' ({mo_ta.strip()})'
+    activity_log_service.ghi(current_user, 'huy_lich_hen', 'appointments',
+                             lich.id, chi_tiet)
     return lich
 
 
