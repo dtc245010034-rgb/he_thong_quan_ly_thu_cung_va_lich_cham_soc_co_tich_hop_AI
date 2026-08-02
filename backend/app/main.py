@@ -30,4 +30,7 @@ def create_app(config_name='default'):
     # Import để SQLAlchemy biết đủ bảng khi gọi create_all().
     from backend.app import models  # noqa: F401
 
+    from backend.app.auth.routes import auth_bp
+    app.register_blueprint(auth_bp)
+
     return app
